@@ -1,8 +1,6 @@
-import json
-import subprocess
-
-
 def execute_curl(curl):
+    import json
+    import subprocess
     try:
         p = subprocess.Popen(curl, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
