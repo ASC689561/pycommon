@@ -1,28 +1,21 @@
 import logging
-
-import functools
-
-import time
+import os
+from logging.handlers import RotatingFileHandler
 
 
+def init_rotating_file(log_path):
+    if not os.path.exists(log_path):
+        os.makedirs(log_path)
 
-def log(logger, level=None, format='%s: %s ms'):
-    if level is None:
-        level = logging.DEBUG
+    debug_log = RotatingFileHandler(log_path + "/debug.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+    debug_log.setLevel(logging.DEBUG)
 
-    def decorator(fn):
-        @functools.wraps(fn)
-        def inner(*args, **kwargs):
-            start = time.time()
-            logger.log(level, "start")
+    debug_log = RotatingFileHandler(log_path + "/info.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+    debug_log.setLevel(logging.INFO)
 
-            result = fn(*args, **kwargs)
+    error_log = RotatingFileHandler(log_path + "/error.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+    error_log.setLevel(logging.ERROR)
 
-            duration = time.time() - start
-            logger.log(level, "end time: {} ".format(duration))
-            logger.log(level, format, repr(fn), duration * 1000)
-            return result
-
-        return inner
-
-    return decorator
+    handlers = [debug_log, error_log, logging.StreamHandler()]
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                        handlers=handlers)

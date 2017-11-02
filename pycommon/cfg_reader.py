@@ -11,7 +11,7 @@ def __init(file_path):
     config.read(file_path)
 
 
-def get_config(key, default_value=None, session='DEFAULT'):
+def get_env_or_config(key, default_value=None, session='DEFAULT'):
     if config is None:
         __init(os.path.dirname(os.path.realpath(sys.argv[0])) + "/config.ini")
 
