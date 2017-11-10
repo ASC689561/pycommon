@@ -2,7 +2,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-from logstash import TCPLogstashHandler
+#
 
 
 class LogBuilder:
@@ -38,6 +38,7 @@ class LogBuilder:
         return self
 
     def init_logstash(self, host, port, *levels):
+        from logstash import TCPLogstashHandler
         for v in levels:
             logstash_handler = TCPLogstashHandler(host, port, version=1)
             logstash_handler.setLevel(v)
