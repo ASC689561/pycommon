@@ -6,5 +6,5 @@ setup(
     # packages=find_packages(exclude=('tests', 'common.egg-info'),include=['*.py','processor/*.py']),
     packages=['pycommon'],
     zip_safe=False,
-    install_requires=['pymongo', 'logstash', ]
+    install_requires=['pymongo', 'logstash','python-logstash' ]
 )
