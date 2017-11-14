@@ -1,8 +1,58 @@
 import logging
 import os
-from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler, SocketHandler
 
-#
+from logstash.formatter import LogstashFormatterBase
+
+
+class CLogstashFormatterVersion1(LogstashFormatterBase):
+    def __init__(self, message_type='Logstash', tags=None, fqdn=False, app_id='app_id'):
+        super().__init__(message_type, tags, fqdn)
+        self.app_id = app_id
+
+    def format(self, record):
+        # Create message dict
+        message = {
+            'app_id': self.app_id,
+            '@timestamp': self.format_timestamp(record.created),
+            '@version': '1',
+            'message': record.getMessage(),
+            'host': self.host,
+            'path': record.pathname,
+            'tags': self.tags,
+            'type': self.message_type,
+
+            # Extra Fields
+            'level': record.levelname,
+            'logger_name': record.name,
+        }
+
+        # Add extra fields
+        message.update(self.get_extra_fields(record))
+
+        # If exception, add debug info
+        if record.exc_info:
+            message.update(self.get_debug_fields(record))
+
+        return self.serialize(message)
+
+
+class CTCPLogstashHandler(SocketHandler, object):
+    """Python logging handler for Logstash. Sends events over TCP.
+    :param host: The host of the logstash server.
+    :param port: The port of the logstash server (default 5959).
+    :param message_type: The type of the message (default logstash).
+    :param fqdn; Indicates whether to show fully qualified domain name or not (default False).
+    :param version: version of logstash event schema (default is 0).
+    :param tags: list of tags for a logger (default is None).
+    """
+
+    def __init__(self, host, port=5959, message_type='logstash', tags=None, fqdn=False, app_id='app_id'):
+        super(CTCPLogstashHandler, self).__init__(host, port)
+        self.formatter = CLogstashFormatterVersion1(message_type, tags, fqdn, app_id=app_id)
+
+    def makePickle(self, record):
+        return self.formatter.format(record) + b'\n'
 
 
 class LogBuilder:
@@ -37,10 +87,10 @@ class LogBuilder:
         self.handlers.extend([debug_log, info_log, error_log])
         return self
 
-    def init_logstash(self, host, port, *levels):
-        from logstash import TCPLogstashHandler
+    def init_logstash(self, host, port, app_id, *levels):
+
         for v in levels:
-            logstash_handler = TCPLogstashHandler(host, port, version=1)
+            logstash_handler = CTCPLogstashHandler(host, port, app_id=app_id)
             logstash_handler.setLevel(v)
             self.handlers.append(logstash_handler)
 
