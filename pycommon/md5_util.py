@@ -1,4 +1,4 @@
-def get_md5(dic):
+def get_dic_md5(dic):
     import hashlib
     import json
 
