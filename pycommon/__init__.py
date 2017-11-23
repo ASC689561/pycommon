@@ -7,4 +7,4 @@ from .string_util import *
 from .json_util import *
 from .try_catch_util import *
 from .logging_util import *
-from .cache import cache
+from .cache import cache, init_diskcache
