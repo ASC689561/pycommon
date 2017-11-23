@@ -4,11 +4,15 @@ import sys
 
 config = None
 
- 
+
 def __init(file_path):
     global config
     config = configparser.ConfigParser()
     config.read(file_path)
+
+
+def get_cfg(key, default_value=None):
+    return get_env_or_config(key, default_value)
 
 
 def get_env_or_config(key, default_value=None, session='DEFAULT'):
