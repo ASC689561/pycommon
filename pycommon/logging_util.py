@@ -2,6 +2,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler, SocketHandler
 
+from logstash import TCPLogstashHandler
 from logstash.formatter import LogstashFormatterBase
 
 
@@ -67,31 +68,37 @@ class LogBuilder:
         self.format_str = format_str
         return self
 
-    def init_stream_handler(self):
-        self.handlers.append(logging.StreamHandler())
+    def init_stream_handler(self, level=logging.DEBUG):
+        handler = logging.StreamHandler()
+        self.handlers.append(handler)
+        handler.setLevel(level)
         return self
 
-    def init_rotating_file(self, log_path):
+    def init_rotating_file_handler(self, log_path, level=logging.DEBUG):
         if not os.path.exists(log_path):
             os.makedirs(log_path)
 
-        debug_log = RotatingFileHandler(log_path + "/debug.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
-        debug_log.setLevel(logging.DEBUG)
+        if level >= logging.DEBUG:
+            debug_log = RotatingFileHandler(log_path + "/debug.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+            debug_log.setLevel(logging.DEBUG)
 
-        info_log = RotatingFileHandler(log_path + "/info.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
-        info_log.setLevel(logging.INFO)
+        if level >= logging.INFO:
+            info_log = RotatingFileHandler(log_path + "/info.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+            info_log.setLevel(logging.INFO)
 
-        error_log = RotatingFileHandler(log_path + "/error.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
-        error_log.setLevel(logging.ERROR)
+        if level >= logging.ERROR:
+            error_log = RotatingFileHandler(log_path + "/error.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+            error_log.setLevel(logging.ERROR)
 
-        self.handlers.extend([debug_log, info_log, error_log])
+        if level >= logging.FATAL:
+            fatal_log = RotatingFileHandler(log_path + "/fatal.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
+            fatal_log.setLevel(logging.FATAL)
+
+        self.handlers.extend([debug_log, info_log, error_log, fatal_log])
         return self
 
-    def init_logstash(self, host, port, app_id, *levels):
-
-        for v in levels:
-            logstash_handler = CTCPLogstashHandler(host, port, app_id=app_id)
-            logstash_handler.setLevel(v)
-            self.handlers.append(logstash_handler)
-
+    def init_logstash_handler(self, host, port, app_id, level=logging.ERROR):
+        logstash_handler = CTCPLogstashHandler(host, port, app_id=app_id)
+        logstash_handler.setLevel(level)
+        self.handlers.append(logstash_handler)
         return self

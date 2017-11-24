@@ -1,3 +1,6 @@
+import logging
+
+
 def execute_curl(curl):
     import json
     import subprocess
@@ -7,6 +10,5 @@ def execute_curl(curl):
         obj = json.loads(out.decode())
         return obj
     except Exception as e:
-        print(err)
-        print(out)
+        logging.error('Error when execute url')
         raise e
