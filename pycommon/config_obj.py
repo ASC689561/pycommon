@@ -16,12 +16,12 @@ class ObjectConfig:
                 if v == k.lower():
                     setattr(self, k, session_value[v])
 
-    # def merge_env(self, *list_property_name):
-    #     import os
-    #     self_attr = list(self._get_all_attr())
-    #     for v in self_attr:
-    #         if v in os.environ:
-    #             setattr(self, v, os.environ[v])
+    def merge_env(self):
+        import os
+        self_attr = list(self._get_all_attr())
+        for v in self_attr:
+            if v in os.environ:
+                setattr(self, v, os.environ[v])
 
     def __str__(self):
         return str(self.__dict__)
