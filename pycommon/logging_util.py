@@ -81,20 +81,23 @@ class LogBuilder:
         if level >= logging.DEBUG:
             debug_log = RotatingFileHandler(log_path + "/debug.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
             debug_log.setLevel(logging.DEBUG)
+            self.handlers.append(debug_log)
 
         if level >= logging.INFO:
             info_log = RotatingFileHandler(log_path + "/info.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
             info_log.setLevel(logging.INFO)
+            self.handlers.append(info_log)
 
         if level >= logging.ERROR:
             error_log = RotatingFileHandler(log_path + "/error.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
             error_log.setLevel(logging.ERROR)
+            self.handlers.append(error_log)
 
         if level >= logging.FATAL:
             fatal_log = RotatingFileHandler(log_path + "/fatal.log", maxBytes=5 * 1024 * 1024, mode='a', backupCount=10)
             fatal_log.setLevel(logging.FATAL)
+            self.handlers.append(fatal_log)
 
-        self.handlers.extend([debug_log, info_log, error_log, fatal_log])
         return self
 
     def init_logstash_handler(self, host, port, app_id, level=logging.ERROR):
