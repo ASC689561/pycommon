@@ -1,7 +1,12 @@
 import configparser
+import logging
+import os
 
 
-class ObjectConfig:
+class ConfigBase:
+    """
+
+    """
     def __init__(self):
         pass
 
@@ -16,24 +21,33 @@ class ObjectConfig:
                 if v == k.lower():
                     setattr(self, k, session_value[v])
 
-    def merge_env(self):
-        import os
-        self_attr = list(self._get_all_attr())
-        for v in self_attr:
-            if v in os.environ:
-                setattr(self, v, os.environ[v])
+    def merge_env(self, *list_property_name):
+        self_attr_dic = list(self._get_all_attr())
+        if len(list_property_name) == 0:
+            for v in self_attr_dic:
+                if v in os.environ:
+                    setattr(self, v, os.environ[v])
+        else:
+            for v in list_property_name:
+                if v not in self_attr_dic:
+                    raise Exception("Property {} not in attribute of config".format(v))
+                if v in os.environ:
+                    try:
+                        setattr(self, v, os.environ[v])
+                    except:
+                        logging.error("Error while try set atribute: {}".format(v))
 
     def __str__(self):
         return str(self.__dict__)
 
     def _get_all_attr(self):
-        attrs = dir(self)
-        for v in attrs:
+        attr = dir(self)
+        for v in attr:
             if str.startswith(v, '__'):
                 continue
             yield v
 
-
+#
 # class AmisConfig(ObjectConfig):
 #     NluProject = None
 #     SmeService = None
@@ -42,10 +56,11 @@ class ObjectConfig:
 #
 #     def __init__(self):
 #         super().__init__()
-
-
+#
+#
 # obj = AmisConfig()
 # obj.merge_file('/opt/projects/bot/botmit/botmit/config.ini')
-# obj.merge_env('USERNAME','SmeService')
-# print(obj.NluProject)
+# # obj.merge_env('USERNAME', 'SmeService')
+# obj.merge_env()
+# # print(obj.NluProject)
 # print(obj)
