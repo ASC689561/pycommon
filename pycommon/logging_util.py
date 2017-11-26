@@ -77,7 +77,7 @@ class LogBuilder:
         if not os.path.exists(log_path):
             os.makedirs(log_path)
 
-        debug_log = RotatingFileHandler(log_path + "/" + level + ".log", maxBytes=5 * 1024 * 1024, mode='a',
+        debug_log = RotatingFileHandler(log_path + "/" + str(level) + ".log", maxBytes=5 * 1024 * 1024, mode='a',
                                         backupCount=10)
         debug_log.setLevel(level)
         self.handlers.append(debug_log)
