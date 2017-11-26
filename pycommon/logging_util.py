@@ -2,7 +2,6 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler, SocketHandler
 
-from logstash import TCPLogstashHandler
 from logstash.formatter import LogstashFormatterBase
 
 
@@ -73,6 +72,15 @@ class LogBuilder:
         self.handlers.append(handler)
         handler.setLevel(level)
         return self
+
+    def init_rotating_file_stream_handler(self, log_path, level=logging.DEBUG):
+        if not os.path.exists(log_path):
+            os.makedirs(log_path)
+
+        debug_log = RotatingFileHandler(log_path + "/" + level + ".log", maxBytes=5 * 1024 * 1024, mode='a',
+                                        backupCount=10)
+        debug_log.setLevel(level)
+        self.handlers.append(debug_log)
 
     def init_rotating_file_handler(self, log_path, level=logging.DEBUG):
         if not os.path.exists(log_path):
