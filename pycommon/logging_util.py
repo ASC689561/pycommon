@@ -61,6 +61,7 @@ class LogBuilder:
         self.format_str = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
     def build(self):
+        logging.getLogger().handlers.clear()
         logging.basicConfig(level=logging.DEBUG, format=self.format_str, handlers=self.handlers)
 
     def set_format(self, format_str):
