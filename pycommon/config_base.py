@@ -7,6 +7,7 @@ class ConfigBase:
     """
 
     """
+
     def __init__(self):
         pass
 
@@ -38,7 +39,8 @@ class ConfigBase:
                         logging.error("Error while try set atribute: {}".format(v))
 
     def __str__(self):
-        return str(self.__dict__)
+        import json
+        return json.dumps(self.__dict__, indent=4)
 
     def _get_all_attr(self):
         attr = dir(self)
