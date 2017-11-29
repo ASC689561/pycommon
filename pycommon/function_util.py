@@ -12,9 +12,9 @@ def custom_timing_log(func, name=None):
             time2 = time.time()
             log_time = (time2 - time1) * 1000.0
             if name is None:
-                func(f.__name__, log_time)
+                func(f.__name__, log_time,*args)
             else:
-                func(name, log_time)
+                func(name, log_time,*args)
             return ret
 
         return wrap
