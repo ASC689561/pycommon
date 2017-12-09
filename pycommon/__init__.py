@@ -2,6 +2,7 @@ from .cache import cache, init_diskcache
 from .cfg_reader import *
 from .config_base import ConfigBase
 from .curl_util import *
+from .debug import is_debug
 from .function_util import *
 from .json_util import *
 from .logging_util import *
