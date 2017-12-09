@@ -1,10 +1,9 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='pycommon',
     version='1.0.0',
-    # packages=find_packages(exclude=('tests', 'common.egg-info'),include=['*.py','processor/*.py']),
-    packages=['pycommon','pycommon.patterns'],
+    packages=['pycommon', 'pycommon.patterns'],
     zip_safe=False,
-    install_requires=['pymongo', 'logstash', 'python-logstash','diskcache']
+    install_requires=['pymongo', 'logstash', 'python-logstash', 'diskcache']
 )
