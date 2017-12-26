@@ -2,12 +2,10 @@ import configparser
 import logging
 import os
 
+from kazoo.client import KazooClient
+
 
 class ConfigBase:
-    """
-
-    """
-
     def __init__(self):
         pass
 
@@ -21,6 +19,10 @@ class ConfigBase:
             for k in self_attr:
                 if v == k.lower():
                     setattr(self, k, session_value[v])
+
+    def from_dic(self, dic):
+        for k, v in dic.items():
+            setattr(self, k, v)
 
     def merge_env(self, *list_property_name):
         self_attr_dic = list(self._get_all_attr())
