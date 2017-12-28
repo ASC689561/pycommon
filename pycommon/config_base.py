@@ -2,8 +2,6 @@ import configparser
 import logging
 import os
 
-from kazoo.client import KazooClient
-
 
 class ConfigBase:
     def __init__(self):
